@@ -9,37 +9,30 @@ import {
 } from '@chakra-ui/react'
 import { Input } from '@chakra-ui/react'
 import { useFormik } from 'formik'
-import * as Yup from 'yup'
+import { useNavigate } from 'react-router-dom';
+import { FieldsLoginValidation } from './utils/yupLogin'
 
-interface MyFormValues {
+interface FormLogin {
     username: string;
     password: string;
 }
 
 export default function Login() {
-    const formik = useFormik<MyFormValues>({
+    const formik = useFormik<FormLogin>({
         initialValues: {
             username: '',
             password: '',
         },
 
-        validationSchema: Yup.object({
-            username: Yup.string()
-            .required('Nome é Obrigatório!')
-            .min(6, 'Nome muito curto!')
-            .max(28, 'Nome muito grande!'),
-
-            password: Yup.string()
-            .required('Senha é Obrigatória!')
-            .min(6, 'Senha muito curta!')
-            .max(28, 'Senha muito grande!'),
-        }),
+        validationSchema: FieldsLoginValidation(),
 
         onSubmit: (values, actions) => {
             alert(JSON.stringify(values, null, 2))
             actions.resetForm()
         }
     })
+
+    const navigate = useNavigate()
 
     return (
         <VStack
@@ -49,33 +42,40 @@ export default function Login() {
             justify= "left"
             h= "100hv"
             spacing= "1rem"
+            onSubmit={formik.handleSubmit}
         >
             <Heading>
                 Login
             </Heading>
-            <FormControl>
+            <FormControl isInvalid={(formik.errors.username && formik.touched.password) || false}>
                 <FormLabel fontSize='lg'>Nome</FormLabel>
                 <Input
                     name='username'
                     placeholder='Digite o Nome'
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
+                    onBlur={formik.handleBlur}
                 />
-                <FormErrorMessage>Invalid username</FormErrorMessage>
+                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
             </FormControl>
 
-            <FormControl>
+            <FormControl isInvalid={(formik.errors.password && formik.touched.password) || false}>
                 <FormLabel fontSize='lg'>Senha</FormLabel>
                 <Input
                     autoComplete='off'
                     type='password'
                     name='password'
                     placeholder='Digite a senha'
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                    onBlur={formik.handleBlur}
                 />
-                <FormErrorMessage>Invalid password</FormErrorMessage>
+                <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
             </FormControl>
 
             <ButtonGroup pt='1rem'>
-                <Button colorScheme='teal'>Log In</Button>
-                <Button>Create Account</Button>
+                <Button colorScheme='teal' type='submit'>Fazer Login</Button>
+                <Button onClick={() => navigate('/register')}>Criar Conta</Button>
             </ButtonGroup>
         </VStack>
     )

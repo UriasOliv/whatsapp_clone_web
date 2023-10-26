@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 
 import Login from './Login/Login'
-import SignUp from './Login/signUp'
+import SignUp from './Login/SignUp'
 
 export default function Views() {
     return (
