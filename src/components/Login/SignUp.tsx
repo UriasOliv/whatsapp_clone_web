@@ -5,6 +5,8 @@ import { FieldsLoginValidation } from './utils/yupLogin'
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
+import LoginService from '../../services/login'
+
 interface FormSignUp {
     username: string;
     password: string;
@@ -20,8 +22,14 @@ export default function SignUp() {
         validationSchema: FieldsLoginValidation(),
 
         onSubmit: ((values, actions) => {
-            console.log(values)
-            actions.resetForm()
+            LoginService.signUp({
+                username: values.username,
+                password: values.password,
+            }).then(() => {
+                actions.resetForm()              
+            }).catch((error) => {
+                console.log(error);
+            })
         })
     })
 
@@ -64,7 +72,7 @@ export default function SignUp() {
             </FormControl>
 
             <ButtonGroup gap={5}>
-                <Button colorScheme="teal">Criar Conta</Button>
+                <Button colorScheme="teal" type="submit">Criar Conta</Button>
                 <Button
                     leftIcon={<ArrowBackIcon />}
                     onClick={() => navigate('/')}

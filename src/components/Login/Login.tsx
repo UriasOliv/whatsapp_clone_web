@@ -12,6 +12,8 @@ import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom';
 import { FieldsLoginValidation } from './utils/yupLogin'
 
+import loginService from '../../services/login'
+
 interface FormLogin {
     username: string;
     password: string;
@@ -27,8 +29,12 @@ export default function Login() {
         validationSchema: FieldsLoginValidation(),
 
         onSubmit: (values, actions) => {
-            alert(JSON.stringify(values, null, 2))
-            actions.resetForm()
+            loginService.authenticate(values).then(result => {
+                console.log(result)
+                actions.resetForm()
+            }).catch(error => {
+                console.log(error)
+            })
         }
     })
 
