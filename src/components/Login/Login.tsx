@@ -7,12 +7,14 @@ import {
     FormErrorMessage,
     Heading,
 } from '@chakra-ui/react'
-import { Input } from '@chakra-ui/react'
+import { Input, Text } from '@chakra-ui/react'
 import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom';
 import { FieldsLoginValidation } from './utils/yupLogin'
+import { useContext, useState } from 'react'
 
 import loginService from '../../services/login'
+import { AccountContext } from '../AccountContext';
 
 interface FormLogin {
     username: string;
@@ -20,6 +22,10 @@ interface FormLogin {
 }
 
 export default function Login() {
+    const navigate = useNavigate()
+    const { setUser } = useContext(AccountContext)
+    const [errorMessager , setErrorMessager] = useState("")
+
     const formik = useFormik<FormLogin>({
         initialValues: {
             username: '',
@@ -29,16 +35,21 @@ export default function Login() {
         validationSchema: FieldsLoginValidation(),
 
         onSubmit: (values, actions) => {
+            // eslint-disable-next-line no-debugger
+            debugger
             loginService.authenticate(values).then(result => {
-                console.log(result)
+                setUser({
+                    loggedIn: result?.loggedIn,
+                    username: result?.username,
+                })
+                navigate('/home')
                 actions.resetForm()
             }).catch(error => {
-                console.log(error)
+                setErrorMessager(error)
+                actions.setFieldValue('password', '')
             })
         }
     })
-
-    const navigate = useNavigate()
 
     return (
         <VStack
@@ -53,6 +64,7 @@ export default function Login() {
             <Heading>
                 Login
             </Heading>
+            <Text as="p" color="red.500">{errorMessager}</Text>
             <FormControl isInvalid={(formik.errors.username && formik.touched.password) || false}>
                 <FormLabel fontSize='lg'>Nome</FormLabel>
                 <Input

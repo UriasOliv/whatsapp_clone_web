@@ -6,6 +6,9 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 import LoginService from '../../services/login'
+import { useContext } from "react";
+
+import { AccountContext } from '../AccountContext'
 
 interface FormSignUp {
     username: string;
@@ -13,6 +16,9 @@ interface FormSignUp {
 }
 
 export default function SignUp() {
+    const navigate = useNavigate()
+    const { setUser } = useContext(AccountContext)
+
     const formik = useFormik<FormSignUp>({
         initialValues: {
             username: '',
@@ -25,15 +31,18 @@ export default function SignUp() {
             LoginService.signUp({
                 username: values.username,
                 password: values.password,
-            }).then(() => {
+            }).then(result => {
+                setUser({
+                    loggedIn: result?.loggedIn,
+                    username: result?.username,
+                })
                 actions.resetForm()              
+                navigate('/home')
             }).catch((error) => {
                 console.log(error);
             })
         })
     })
-
-    const navigate = useNavigate()
 
     return (
         <VStack
