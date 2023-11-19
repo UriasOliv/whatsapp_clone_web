@@ -1,7 +1,7 @@
 import io from 'socket.io-client'
 
 const socket = io('http://localhost', {
-    autoConnect: true,
+    autoConnect: false,
     withCredentials: true,
 })
 
