@@ -16,8 +16,6 @@ type AuthenticateReturn = {
 class Login {
     async authenticate(data: AuthType) {
         try {
-            // eslint-disable-next-line no-debugger
-            debugger
             const response: AxiosResponse<AuthenticateReturn> = await axiosService.post(`${prefix}/login`, data)
             return response.data
         } catch (error) {

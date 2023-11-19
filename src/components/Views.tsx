@@ -5,6 +5,7 @@ import {Text} from '@chakra-ui/react'
 
 import Login from './Login/Login'
 import SignUp from './Login/SignUp'
+import Home from './Home/Home'
 import PrivateRoutes from './PrivateRoutes'
 import { AccountContext } from './AccountContext'
 
@@ -14,7 +15,7 @@ function RenderRoutes() {
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<SignUp />}></Route>
             <Route element={<PrivateRoutes />}>
-                <Route path="/home" element={<Text>LOGADOOOO</Text>}></Route>
+                <Route path="/home" element={<Home />}></Route>
             </Route>
             <Route path="/*" element={<Login />}></Route>
         </Routes>

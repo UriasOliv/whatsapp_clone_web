@@ -35,8 +35,6 @@ export default function Login() {
         validationSchema: FieldsLoginValidation(),
 
         onSubmit: (values, actions) => {
-            // eslint-disable-next-line no-debugger
-            debugger
             loginService.authenticate(values).then(result => {
                 setUser({
                     loggedIn: result?.loggedIn,
