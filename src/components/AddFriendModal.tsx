@@ -3,6 +3,7 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
+    Heading,
     Input,
     Modal,
     ModalBody,
@@ -14,7 +15,9 @@ import {
     
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
+import { useCallback, useState } from "react";
 import * as Yup from 'yup'
+import userService from "../services/user";
 
 interface AddFriendModalProps {
     isOpen: boolean;
@@ -26,6 +29,12 @@ interface FormAddFriend {
 }
 
 export default function AddFriendModal({ isOpen=true, onClose }: AddFriendModalProps) {
+    const [error, setError] = useState('')
+
+    const closeModal = useCallback(() => {
+        setError("")
+        onClose()
+    }, [onClose])
 
     const formik = useFormik<FormAddFriend>({
         initialValues: {
@@ -37,9 +46,12 @@ export default function AddFriendModal({ isOpen=true, onClose }: AddFriendModalP
         }),
 
         onSubmit: (values, actions) => {
-            console.log(values)
-            onClose()
-            actions.resetForm()
+            userService.addFriend(values.friendName).then(() => {
+                closeModal()
+                actions.resetForm()
+            }).catch(error => {
+                setError(error)
+            })
         }
     })
 
@@ -47,16 +59,24 @@ export default function AddFriendModal({ isOpen=true, onClose }: AddFriendModalP
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
                 <ModalContent>
-                <ModalHeader>Modal Title</ModalHeader>
+                <ModalHeader>Adicionando Amigo</ModalHeader>
                 <ModalCloseButton />
 
                 <form onSubmit={formik.handleSubmit}>
                     <ModalBody>
+                        <Heading
+                            as="p"
+                            color="red.500"
+                            textAlign='center'
+                            fontSize='md'
+                        >
+                            {error}
+                        </Heading>
                         <FormControl isInvalid={(formik.errors.friendName && formik.touched.friendName) || false}>
                             <FormLabel fontSize='lg'>Nome</FormLabel>
                             <Input
                                 name='friendName'
-                                placeholder='Digite o Nome'
+                                placeholder='Digite o Nome do Usuario'
                                 onChange={formik.handleChange}
                                 value={formik.values.friendName}
                                 onBlur={formik.handleBlur}
